@@ -4,8 +4,8 @@ import Card from "./components/card";
 import Filter from "./components/filter";
 function App() {
   return (
-    <div className="flex-row">
-      <div className="flex-row shadow-lg">
+    <div className="flex-row bg-[#FBFBFF]">
+      <div className="flex-row bg-[#FFFFFF] shadow-lg">
         <div className="px-80 pt-10  ">
           <Navbar />
         </div>
