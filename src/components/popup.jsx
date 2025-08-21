@@ -1,6 +1,11 @@
 import React from "react";
+import { useState } from "react";
+import { FaAnglesDown } from "react-icons/fa6";
+import { FaAngleDoubleRight } from "react-icons/fa";
 
 function Popup({ setOpen }) {
+  const [date, setDate] = useState("");
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="flex-row bg-white rounded-2xl shadow-xl p-6  relative animate-fadeIn">
@@ -38,10 +43,13 @@ function Popup({ setOpen }) {
                 Location
               </label>
               <select className="w-full border-1 rounded-lg hover:text-[#222222] hover:border-[#222222] border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]">
-                <option value="">Full-Time</option>
-                <option value="part-time">Part-Time</option>
-                <option value="contract">Contract</option>
-                <option value="internship">Internship</option>
+                <option value="" disabled>
+                  Choose preferred location
+                </option>
+                <option value="Chennai">Chennai</option>
+                <option value="Madurai">Madurai</option>
+                <option value="Coimbatore">Coimbatore</option>
+                <option value="Trichy">Trichy</option>
               </select>
             </div>
             <div>
@@ -49,7 +57,9 @@ function Popup({ setOpen }) {
                 Job Type
               </label>
               <select className="w-full border-1 rounded-lg hover:text-[#222222] hover:border-[#222222] border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]">
-                <option value="">Full-Time</option>
+                <option value="" disabled>
+                  Full-Time
+                </option>
                 <option value="part-time">Part-Time</option>
                 <option value="contract">Contract</option>
                 <option value="internship">Internship</option>
@@ -60,52 +70,62 @@ function Popup({ setOpen }) {
           {/* Mobile Number */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[#BCBCBC] hover:text-[#222222] focus:font-bold text-sm font-medium mb-1">
+              <label className="block focus:text-[#222222] text-[#BCBCBC] hover:text-[#222222] focus:font-bold text-sm font-medium mb-1">
                 Salary
               </label>
               <div className="flex gap-5">
                 <input
                   type="text"
                   className="w-full border-1 rounded-lg hover:text-[#222222] hover:border-[#222222] border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
-                  placeholder="Enter your first name"
+                  placeholder="0"
                 />
                 <input
                   type="text"
                   className="w-full border-1 rounded-lg hover:text-[#222222] hover:border-[#222222] border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
-                  placeholder="Enter your first name"
+                  placeholder="12,00,000"
                 />
               </div>
             </div>
-            <div>
+            <div className="relative">
               <label className="block text-[#BCBCBC] hover:text-[#222222] focus:font-bold text-sm font-medium mb-1">
-                First Name
+                Application deadline
               </label>
               <input
-                type="text"
-                className="w-full border-1 rounded-lg hover:text-[#222222] hover:border-[#222222] border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
-                placeholder="Enter your first name"
-              />
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="appearance-none w-full border-1  rounded-lg hover:text-[#222222] hover:border-[#222222] border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
+              />{" "}
             </div>
           </div>
           {/* What can we help you with? */}
           <div>
             <label className="block text-[#BCBCBC] hover:text-[#222222] focus:font-bold text-sm font-medium mb-1">
-              What can we help you with?
+              Job description
             </label>
             <textarea
               rows="4"
               className="w-full border-1 rounded-lg hover:text-[#222222] hover:border-[#222222] border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
-              placeholder="Describe your query"
+              placeholder="Please share a description to let the candidate know more about the job role"
             ></textarea>
           </div>
-
+          <div className="flex justify-between items-center">
+            <button
+              type="submit"
+              className="flex bg-transparent p-2 px-4 rounded-lg text-black border-1 border-black "
+            >
+              <p>Save Draft</p>
+              <FaAnglesDown className="pt-2 h-5 w-5" />
+            </button>
+            <button
+              type="submit"
+              className="flex bg-[#00AAFF] p-2 px-4 rounded-lg text-white border-none border-black "
+            >
+              <p>Publish</p>
+              <FaAngleDoubleRight className="pt-2 h-5 w-5" />
+            </button>
+          </div>
           {/* Submit Button */}
-          <button
-            type="submit"
-            className=" bg-[#D66026]  text-white text-lg    px-6 py-1 "
-          >
-            Enquiry
-          </button>
         </form>
         {/* Close Button */}
         <button
