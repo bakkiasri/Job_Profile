@@ -11,7 +11,7 @@ function App() {
         </div>
         <Filter className="p-0 w-full" />
       </div>
-      <div className="p-10">
+      <div className="p-15">
         <Card />
       </div>
     </div>
