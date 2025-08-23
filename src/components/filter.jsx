@@ -1,89 +1,267 @@
 import React, { useState } from "react";
-import { CiSearch, CiLocationOn } from "react-icons/ci";
-import { PiUserSoundThin } from "react-icons/pi";
-import { Range } from "react-range";
+import { FaAnglesDown } from "react-icons/fa6";
+import { FaAngleDoubleRight } from "react-icons/fa";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
-function Filter() {
-  const [values, setValues] = useState([50000, 80000]); // initial salary range
+function Popup({ setOpen }) {
+  const [date, setDate] = useState("");
+
+  // Yup schema
+  const validationSchema = Yup.object({
+    firstName: Yup.string().required("First Name is required"),
+    lastName: Yup.string().required("Last Name is required"),
+    location: Yup.string().required("Location is required"),
+    jobType: Yup.string().required("Job Type is required"),
+    salaryMin: Yup.number()
+      .typeError("Enter a valid number")
+      .required("Min Salary is required"),
+    salaryMax: Yup.number()
+      .typeError("Enter a valid number")
+      .required("Max Salary is required")
+      .moreThan(Yup.ref("salaryMin"), "Max must be greater than Min"),
+    deadline: Yup.date().required("Deadline is required"),
+    description: Yup.string()
+      .min(20, "Description must be at least 20 characters")
+      .required("Job description is required"),
+  });
 
   return (
-    <div className="flex text-[#686868] py-8 justify-around items-center">
-      {/* Search Input */}
-      <div className="flex gap-6 w-80 border-r-2 border-[#EAEAEA] pr-4">
-        <CiSearch className="h-7 w-7 font-semibold" />
-        <input
-          type="text"
-          placeholder="Search by job title, role"
-          className="border-none outline-none bg-transparent placeholder-gray-400 text-base w-full"
+    <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
+      {/* Desktop / Tablet Popup */}
+      <div className="hidden sm:block flex-row bg-white rounded-2xl shadow-xl p-6 relative animate-fadeIn">
+        <h2 className="text-center pb-0 lg:pb-4 text-4xl font-semibold mb-4">
+          Create A Job
+        </h2>
+        <FormFields
+          validationSchema={validationSchema}
+          setDate={setDate}
+          date={date}
         />
+
+        {/* Close Button */}
+        <button
+          onClick={() => setOpen(false)}
+          className="absolute top-2 cursor-pointer right-2 text-gray-600 hover:text-black"
+        >
+          ✕
+        </button>
       </div>
 
-      {/* Location Input */}
-      <div className="flex gap-6 w-80 border-r-2 border-[#EAEAEA] pr-4">
-        <CiLocationOn className="h-7 w-7 font-semibold" />
-        <input
-          type="text"
-          placeholder="Search by location"
-          className="border-none outline-none bg-transparent placeholder-gray-400 text-base w-full"
+      {/* Mobile Full Page */}
+      <div className="block sm:hidden w-full h-full bg-white p-6 relative overflow-y-auto animate-fadeIn">
+        <h2 className="text-center pb-0 text-3xl font-semibold mb-4">
+          Create A Job
+        </h2>
+        <FormFields
+          validationSchema={validationSchema}
+          setDate={setDate}
+          date={date}
         />
-      </div>
 
-      {/* Job Type Select */}
-      <div className="flex gap-6 w-80 border-r-2 border-[#EAEAEA] pr-4">
-        <PiUserSoundThin className="h-7 w-7 font-semibold" />
-        <select className="border-none outline-none bg-transparent text-base w-full">
-          <option value="">Full-Time</option>
-          <option value="part-time">Part-Time</option>
-          <option value="contract">Contract</option>
-          <option value="internship">Internship</option>
-        </select>
-      </div>
-
-      {/* Salary Range */}
-      <div className="flex flex-col gap-3 w-80 text-black">
-        <div className="flex justify-between text-sm mb-2">
-          <p className="font-medium">Salary Per Month</p>
-          <p>
-            ₹{(values[0] / 1000).toFixed(0)}k - ₹{(values[1] / 1000).toFixed(0)}
-            k
-          </p>
-        </div>
-
-        <Range
-          step={1000}
-          min={20000}
-          max={120000}
-          values={values}
-          onChange={(vals) => setValues(vals)}
-          renderTrack={({ props, children }) => (
-            <div
-              {...props}
-              className="h-1 w-full rounded"
-              style={{
-                background: `linear-gradient(to right, #d1d5db ${
-                  ((values[0] - 20000) / (120000 - 20000)) * 100
-                }%, #000 ${
-                  ((values[0] - 20000) / (120000 - 20000)) * 100
-                }%, #000 ${
-                  ((values[1] - 20000) / (120000 - 20000)) * 100
-                }%, #d1d5db ${
-                  ((values[1] - 20000) / (120000 - 20000)) * 100
-                }%)`,
-              }}
-            >
-              {children}
-            </div>
-          )}
-          renderThumb={({ props }) => (
-            <div
-              {...props}
-              className="h-5 w-5 bg-white border-2 border-black rounded-full"
-            />
-          )}
-        />
+        {/* Close Button */}
+        <button
+          onClick={() => setOpen(false)}
+          className="absolute top-2 cursor-pointer right-2 text-gray-600 hover:text-black"
+        >
+          ✕
+        </button>
       </div>
     </div>
   );
 }
 
-export default Filter;
+function FormFields({ validationSchema, date, setDate }) {
+  return (
+    <Formik
+      initialValues={{
+        firstName: "",
+        lastName: "",
+        location: "",
+        jobType: "",
+        salaryMin: "",
+        salaryMax: "",
+        deadline: "",
+        description: "",
+      }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        console.log("Form submitted", values);
+      }}
+    >
+      {({ handleSubmit }) => (
+        <Form className="space-y-5 ps-0 me-5" onSubmit={handleSubmit}>
+          {/* First & Last Name */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[#BCBCBC] text-sm font-medium mb-1">
+                First Name
+              </label>
+              <Field
+                type="text"
+                name="firstName"
+                className="w-full border-1 rounded-lg border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
+                placeholder="Enter your first name"
+              />
+              <ErrorMessage
+                name="firstName"
+                component="p"
+                className="text-red-500 text-xs mt-1"
+              />
+            </div>
+            <div>
+              <label className="block text-[#BCBCBC] text-sm font-medium mb-1">
+                Last Name
+              </label>
+              <Field
+                type="text"
+                name="lastName"
+                className="w-full border-1 rounded-lg border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
+                placeholder="Enter your last name"
+              />
+              <ErrorMessage
+                name="lastName"
+                component="p"
+                className="text-red-500 text-xs mt-1"
+              />
+            </div>
+          </div>
+
+          {/* Location & Job Type */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[#BCBCBC] text-sm font-medium mb-1">
+                Location
+              </label>
+              <Field
+                as="select"
+                name="location"
+                className="w-full border-1 rounded-lg border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
+              >
+                <option value="">Choose preferred location</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Madurai">Madurai</option>
+                <option value="Coimbatore">Coimbatore</option>
+                <option value="Trichy">Trichy</option>
+              </Field>
+              <ErrorMessage
+                name="location"
+                component="p"
+                className="text-red-500 text-xs mt-1"
+              />
+            </div>
+            <div>
+              <label className="block text-[#BCBCBC] text-sm font-medium mb-1">
+                Job Type
+              </label>
+              <Field
+                as="select"
+                name="jobType"
+                className="w-full border-1 rounded-lg border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
+              >
+                <option value="">Select Job Type</option>
+                <option value="full-time">Full-Time</option>
+                <option value="part-time">Part-Time</option>
+                <option value="contract">Contract</option>
+                <option value="internship">Internship</option>
+              </Field>
+              <ErrorMessage
+                name="jobType"
+                component="p"
+                className="text-red-500 text-xs mt-1"
+              />
+            </div>
+          </div>
+
+          {/* Salary & Deadline */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[#BCBCBC] text-sm font-medium mb-1">
+                Salary
+              </label>
+              <div className="flex gap-5">
+                <Field
+                  type="text"
+                  name="salaryMin"
+                  className="w-full border-1 rounded-lg border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
+                  placeholder="0"
+                />
+                <Field
+                  type="text"
+                  name="salaryMax"
+                  className="w-full border-1 rounded-lg border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
+                  placeholder="12,00,000"
+                />
+              </div>
+              <ErrorMessage
+                name="salaryMin"
+                component="p"
+                className="text-red-500 text-xs mt-1"
+              />
+              <ErrorMessage
+                name="salaryMax"
+                component="p"
+                className="text-red-500 text-xs mt-1"
+              />
+            </div>
+            <div className="relative">
+              <label className="block text-[#BCBCBC] text-sm font-medium mb-1">
+                Application deadline
+              </label>
+              <Field
+                type="date"
+                name="deadline"
+                value={date}
+                className="appearance-none w-full border-1 rounded-lg border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
+              />
+              <ErrorMessage
+                name="deadline"
+                component="p"
+                className="text-red-500 text-xs mt-1"
+              />
+            </div>
+          </div>
+
+          {/* Job Description */}
+          <div>
+            <label className="block text-[#BCBCBC] text-sm font-medium mb-1">
+              Job description
+            </label>
+            <Field
+              as="textarea"
+              name="description"
+              rows="4"
+              className="w-full border-1 rounded-lg border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
+              placeholder="Please share a description to let the candidate know more about the job role"
+            />
+            <ErrorMessage
+              name="description"
+              component="p"
+              className="text-red-500 text-xs mt-1"
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-between items-center">
+            <button
+              type="button"
+              className="flex bg-transparent p-2 px-4 rounded-lg text-black border-1 border-black"
+            >
+              <p>Save Draft</p>
+              <FaAnglesDown className="pt-2 h-5 w-5" />
+            </button>
+            <button
+              type="submit"
+              className="flex bg-[#00AAFF] p-2 px-4 rounded-lg text-white"
+            >
+              <p>Publish</p>
+              <FaAngleDoubleRight className="pt-2 h-5 w-5" />
+            </button>
+          </div>
+        </Form>
+      )}
+    </Formik>
+  );
+}
+
+export default Popup;
