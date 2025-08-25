@@ -3,8 +3,8 @@ import { FaAnglesDown } from "react-icons/fa6";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-
-function Popup({ setOpen }) {
+import logo from "../assets/image78.png";
+function Popup({ setOpen, onAddJob }) {
   const [date, setDate] = useState("");
 
   // Yup schema
@@ -37,6 +37,8 @@ function Popup({ setOpen }) {
           validationSchema={validationSchema}
           setDate={setDate}
           date={date}
+          onAddJob={onAddJob}
+          setOpen={setOpen}
         />
 
         {/* Close Button */}
@@ -57,6 +59,8 @@ function Popup({ setOpen }) {
           validationSchema={validationSchema}
           setDate={setDate}
           date={date}
+          setOpen={setOpen} // <--- pass it here
+          onAddJob={onAddJob}
         />
 
         {/* Close Button */}
@@ -71,7 +75,7 @@ function Popup({ setOpen }) {
   );
 }
 
-function FormFields({ validationSchema, date, setDate }) {
+function FormFields({ validationSchema, setOpen, onAddJob }) {
   return (
     <Formik
       initialValues={{
@@ -87,6 +91,21 @@ function FormFields({ validationSchema, date, setDate }) {
       validationSchema={validationSchema}
       onSubmit={(values) => {
         console.log("Form submitted", values);
+        const newJob = {
+          company: `${values.firstName} ${values.lastName}`,
+          title: `${values.location}`,
+          type: values.jobType,
+          exp: "0-2 Yrs",
+          salary: `${values.salaryMin}`,
+          posted: "Just now",
+          description: values.description.split("\n").filter(Boolean),
+          logo: logo,
+        };
+        if (onAddJob) {
+          onAddJob(newJob);
+          console.log("onAddJob called successfully with:", newJob);
+        }
+        setOpen(false);
       }}
     >
       {({ handleSubmit }) => (
@@ -160,10 +179,8 @@ function FormFields({ validationSchema, date, setDate }) {
                 className="w-full border-1 rounded-lg border-[#BCBCBC] p-3 focus:outline-none focus:ring-1 focus:ring-[#222222]"
               >
                 <option value="">Select Job Type</option>
-                <option value="full-time">Full-Time</option>
-                <option value="part-time">Part-Time</option>
-                <option value="contract">Contract</option>
-                <option value="internship">Internship</option>
+                <option value="Onsite">Onsite</option>
+                <option value="Remote">Remote</option>
               </Field>
               <ErrorMessage
                 name="jobType"

@@ -2,9 +2,15 @@ import React from "react";
 import { BiUserPlus } from "react-icons/bi";
 import { RiBuildingLine } from "react-icons/ri";
 import { FiLayers } from "react-icons/fi";
-import jobs from "./JobList"; // import job data
 
-function JobCard() {
+function JobCard({ jobs = [] }) {
+  if (jobs.length === 0) {
+    return (
+      <div className="flex justify-center mt-10 text-gray-500">
+        No jobs created yet. Click "Create Job".
+      </div>
+    );
+  }
   return (
     <div className="flex justify-center items-center p-6">
       <div
@@ -36,7 +42,9 @@ function JobCard() {
               </div>
 
               {/* Job Title */}
-              <h3 className="text-lg text-start font-semibold">{job.title}</h3>
+              <h3 className="text-lg text-start font-semibold">
+                {job.company}
+              </h3>
 
               {/* Stats */}
               <div className="flex justify-between text-[#5A5A5A] items-center w-full text-md font-medium">

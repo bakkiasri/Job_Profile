@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import logo from "../assets/Clip.png";
 import Popup from "./popup"; // ensure correct file path
 
-function Navbar() {
-  const [open, setOpen] = useState(false);
+function Navbar({ setOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -65,7 +64,6 @@ function Navbar() {
       )}
 
       {/* Popup */}
-      {open && <Popup setOpen={setOpen} />}
     </nav>
   );
 }
